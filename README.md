@@ -1,10 +1,10 @@
 # flybrain
 
-Hack the North 2026 project — exploring the FlyWire fruit-fly connectome (the full ~140k-neuron Drosophila brain map).
+Hackathon project — the FlyWire fruit-fly connectome (~140k-neuron Drosophila brain map) as a frozen reservoir that plays piano.
 
 ## Status
 
-Pre-event scaffolding only. Per HTN rules, this repo contains **only generator boilerplate and planning docs** — no custom code before kickoff.
+Scaffolding + planning docs. Per event rules, custom code starts at kickoff — until then this repo contains **only generator boilerplate and planning docs**.
 
 - `create-next-app` output (Next.js 15, TypeScript, Tailwind, App Router)
 - three.js + @react-three/fiber + @react-three/drei installed for 3D neuron rendering
