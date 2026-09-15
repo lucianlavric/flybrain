@@ -25,6 +25,8 @@ export type Stimulus = {
   tag: string;
   artist?: string;
   cover?: string;
+  /** Local audio file served from /public; gitignored, synth fallback when absent. */
+  src?: string;
 };
 
 export type AudioSnap = {
@@ -96,11 +98,12 @@ export const SONGS: Stimulus[] = [
   {
     id: "sofia",
     name: "Sofia",
-    note: "Measured from the real track: the soft production doesn't survive band-limiting — in-band it's as rough as a knock2 drop. Mild repel.",
+    note: "Measured from the real track at fly sensitivity: warm, steady, likable — a modest attract, but not the star.",
     kind: "song",
     hz: 441,
-    roughness: 0.67,
-    courtship: 0.2,
+    roughness: 0.35,
+    courtship: 0.4,
+    src: "/tracks/sofia.mp3",
     color: "#e8b4b8",
     tag: "artist",
     artist: "Clairo",
@@ -109,11 +112,12 @@ export const SONGS: Stimulus[] = [
   {
     id: "north",
     name: "North",
-    note: "Measured from the real track: Clairo's roughest, as predicted — tied with dashstar* for most repellent of the six.",
+    note: "Measured from the real track at fly sensitivity: Clairo's roughest — the lo-fi fuzz keeps it near the bottom of the six.",
     kind: "song",
     hz: 440,
-    roughness: 0.68,
-    courtship: 0.2,
+    roughness: 0.37,
+    courtship: 0.39,
+    src: "/tracks/north.mp3",
     color: "#b08968",
     tag: "artist",
     artist: "Clairo",
@@ -122,11 +126,12 @@ export const SONGS: Stimulus[] = [
   {
     id: "delicate",
     name: "Delicate",
-    note: "Measured from the real track: the fly's favorite of the six — lowest roughness, highest courtship — but still net mild repel. No human song attracts.",
+    note: "Measured from the real track at fly sensitivity: cleanest and most pulse-like of the six — the strongest human attractor in the library.",
     kind: "song",
     hz: 434,
-    roughness: 0.62,
-    courtship: 0.24,
+    roughness: 0.24,
+    courtship: 0.47,
+    src: "/tracks/delicate.mp3",
     color: "#9db4c0",
     tag: "artist",
     artist: "Taylor Swift",
@@ -135,11 +140,12 @@ export const SONGS: Stimulus[] = [
   {
     id: "readyforit",
     name: "…Ready For It?",
-    note: "Measured from the real track: the industrial menace is mostly above the fly's hearing — in-band it's milder than Sofia. Mid-pack repel.",
+    note: "Measured from the real track at fly sensitivity: the industrial menace lives above fly hearing — in-band it's a solid second-place attract.",
     kind: "song",
     hz: 438,
-    roughness: 0.65,
-    courtship: 0.21,
+    roughness: 0.3,
+    courtship: 0.43,
+    src: "/tracks/readyforit.mp3",
     color: "#4a5759",
     tag: "artist",
     artist: "Taylor Swift",
@@ -148,11 +154,12 @@ export const SONGS: Stimulus[] = [
   {
     id: "feeluluvme",
     name: "feel U luv Me",
-    note: "Measured from the real track: the 80–900 Hz slice the antenna receives is rougher than it sounds. Mild repel, not the predicted attract.",
+    note: "Measured from the real track at fly sensitivity: faint attract — though its stutter chops carry the strongest click-train timing of the six.",
     kind: "song",
     hz: 457,
-    roughness: 0.67,
-    courtship: 0.19,
+    roughness: 0.35,
+    courtship: 0.37,
+    src: "/tracks/feeluluvme.mp3",
     color: "#c77dff",
     tag: "artist",
     artist: "knock2",
@@ -161,11 +168,12 @@ export const SONGS: Stimulus[] = [
   {
     id: "dashstar",
     name: "dashstar*",
-    note: "Measured from the real track: repel confirmed, but mastering flattens the growl — in-band it's barely rougher than feel U luv Me.",
+    note: "Measured from the real track at fly sensitivity: last place of the six — the growl still reads roughest, barely on the attract side of neutral.",
     kind: "song",
     hz: 447,
-    roughness: 0.69,
-    courtship: 0.19,
+    roughness: 0.37,
+    courtship: 0.37,
+    src: "/tracks/dashstar.mp3",
     color: "#ff5d8f",
     tag: "artist",
     artist: "knock2",

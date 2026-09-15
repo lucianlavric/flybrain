@@ -31,6 +31,8 @@ export class SoundLab {
   private freqBuf: Uint8Array<ArrayBuffer> | null = null;
   private timeBuf: Uint8Array<ArrayBuffer> | null = null;
   private lastKind: Stimulus["kind"] | null = null;
+  private trackBuffers = new Map<string, AudioBuffer>();
+  private playSeq = 0;
   private heldRms = 0;
   listenGain = 0.22;
 
@@ -117,6 +119,7 @@ export class SoundLab {
 
   stop() {
     this.playing = false;
+    this.playSeq += 1;
     for (const id of this.timers) window.clearTimeout(id);
     this.timers = [];
     for (const node of this.sources) {
@@ -140,6 +143,7 @@ export class SoundLab {
     const tap = this.tap;
     if (!ctx || !tap) return;
     this.stop();
+    const seq = ++this.playSeq;
     this.playing = true;
     this.lastKind = stim.kind;
     switch (stim.kind) {
@@ -167,9 +171,35 @@ export class SoundLab {
       case "file":
         this.startFile(ctx, tap);
         break;
-      case "song":
+      case "song": {
+        if (stim.src) {
+          const buffer = await this.loadTrack(stim.id, stim.src);
+          if (seq !== this.playSeq) return;
+          if (buffer) {
+            this.startBuffer(ctx, tap, buffer);
+            break;
+          }
+        }
         this.startLibrarySong(ctx, tap, stim.id);
         break;
+      }
+    }
+  }
+
+  private async loadTrack(id: string, src: string) {
+    const cached = this.trackBuffers.get(id);
+    if (cached) return cached;
+    const ctx = this.ctx;
+    if (!ctx) return null;
+    try {
+      const res = await fetch(src);
+      if (!res.ok) return null;
+      const raw = await res.arrayBuffer();
+      const buffer = await ctx.decodeAudioData(raw);
+      this.trackBuffers.set(id, buffer);
+      return buffer;
+    } catch {
+      return null;
     }
   }
 
@@ -502,8 +532,12 @@ export class SoundLab {
 
   private startFile(ctx: AudioContext, dest: AudioNode) {
     if (!this.fileBuffer) return;
+    this.startBuffer(ctx, dest, this.fileBuffer);
+  }
+
+  private startBuffer(ctx: AudioContext, dest: AudioNode, buffer: AudioBuffer) {
     const src = ctx.createBufferSource();
-    src.buffer = this.fileBuffer;
+    src.buffer = buffer;
     src.loop = true;
     const gain = ctx.createGain();
     gain.gain.value = 0.55;
@@ -532,7 +566,7 @@ function spectrumShape(freq: Uint8Array, binHz: number) {
     if (hz >= 80 && hz <= 800) jo += mag;
   }
   const hz = sum > 1e-4 ? weighted / sum : 0;
-  const roughness = clamp01(1 - peak / Math.max(sum / 24, 1e-4));
+  const roughness = clamp01(1 - peak / Math.max(sum / 48, 1e-4));
   const joShare = jo / Math.max(total, 1e-4);
   const courtship =
     joGainLocal(hz) * (1 - roughness) * clamp01(joShare * 2.2);

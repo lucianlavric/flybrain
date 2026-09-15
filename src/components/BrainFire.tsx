@@ -7,6 +7,20 @@ type BrainFireProps = {
   forward: number;
   turn: number;
   pitch: number;
+  /** 16-band audio spectrum from the sound lab; drives sensory regions. */
+  bars: number[];
+  intensity: number;
+};
+
+/** How strongly incoming audio lights each region when backend fire is quiet. */
+const AUDIO_WEIGHT: Record<string, number> = {
+  "ol-l": 0.15,
+  "ol-r": 0.15,
+  "mb-l": 0.55,
+  "mb-r": 0.55,
+  cx: 0.45,
+  al: 0.9,
+  vnc: 0.25,
 };
 
 const REGIONS = [
@@ -32,7 +46,22 @@ export function BrainFire({
   forward,
   turn,
   pitch,
+  bars,
+  intensity,
 }: BrainFireProps) {
+  const drive = Math.min(1, intensity * 1.6);
+  const motorDrive = Math.min(1, Math.abs(forward) + Math.abs(turn) + Math.abs(pitch));
+  const activity = fire.map((value, i) => {
+    const region =
+      REGIONS[Math.min(REGIONS.length - 1, Math.floor(i / 16))] ?? REGIONS[4];
+    const band = bars[(i * 7) % 16] ?? 0;
+    const weight = AUDIO_WEIGHT[region.id] ?? 0.3;
+    const audio =
+      region.id === "vnc"
+        ? motorDrive * (0.4 + band * 0.6)
+        : band * weight * (0.35 + drive * 0.65);
+    return Math.max(value, audio);
+  });
   return (
     <div className="pointer-events-none mt-3 w-[240px] rounded-xl bg-black/55 p-2.5 backdrop-blur-sm">
       <div className="flex items-center justify-between px-0.5">
@@ -45,7 +74,7 @@ export function BrainFire({
       </div>
       <svg className="mt-1 h-[168px] w-full" viewBox="0 0 240 190" aria-hidden>
         {REGIONS.map((region) => {
-          const glow = mean(fire, region.slice[0], region.slice[1]);
+          const glow = mean(activity, region.slice[0], region.slice[1]);
           return (
             <ellipse
               cx={region.x}
@@ -59,7 +88,7 @@ export function BrainFire({
             />
           );
         })}
-        {fire.map((value, i) => {
+        {activity.map((value, i) => {
           const region = REGIONS[Math.min(REGIONS.length - 1, Math.floor(i / 16))] ?? REGIONS[4];
           const ox = ((i * 17) % 21) - 10;
           const oy = ((i * 11) % 17) - 8;

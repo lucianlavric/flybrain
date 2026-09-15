@@ -78,6 +78,7 @@ export function ArenaApp() {
   const motor = useRef<Motor>({ forward: 0.3, turn: 0, pitch: 0.12 });
   const energy = useRef(0.2);
   const [fire, setFire] = useState<number[]>(() => Array(96).fill(0));
+  const [bars, setBars] = useState<number[]>(() => Array(16).fill(0));
   const local = useMemo(() => new LocalFlyBrain(), []);
   const remote = useMemo(() => new ModalFlyBrain(), []);
   const lab = useMemo(() => new SoundLab(), []);
@@ -132,9 +133,18 @@ export function ArenaApp() {
     lab.setListenGain(volume);
   }, [lab, volume]);
 
+  useEffect(() => {
+    if (!playing) return;
+    const timer = window.setInterval(() => {
+      setBars(lab.snapshot(stimulus).bars);
+    }, 100);
+    return () => window.clearInterval(timer);
+  }, [lab, playing, stimulus]);
+
   const stopPlayback = useCallback(() => {
     lab.stop();
     setPlaying(false);
+    setBars(Array(16).fill(0));
   }, [lab]);
 
   const playNow = useCallback(
@@ -249,8 +259,10 @@ export function ArenaApp() {
             </p>
             <BrainFire
               backend={backend === "modal" ? "gpu" : "local"}
+              bars={bars}
               fire={fire}
               forward={hud.forward}
+              intensity={hud.intensity}
               live={mode === "brain" && (backend === "local" || link === "live")}
               pitch={hud.climb}
               turn={hud.turn}
