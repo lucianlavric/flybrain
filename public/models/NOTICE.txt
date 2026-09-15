@@ -1,0 +1,8 @@
+flybody.glb is derived from the DeepMind / HHMI Janelia fruit fly body model
+published in google-deepmind/mujoco_menagerie (flybody) and TuragaLab/flybody.
+
+License: Apache License 2.0 (see flybody-LICENSE.txt)
+
+Citation:
+Vaxenburg et al., Nature 643, 1312–1320 (2025)
+https://doi.org/10.1038/s41586-025-09029-4
