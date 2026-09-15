@@ -371,6 +371,76 @@ export class SoundLab {
       });
       return;
     }
+    if (id === "sofia") {
+      this.startDrone(ctx, dest, 90, "sine", 0.06);
+      this.startMelody(ctx, dest, {
+        notes: [180, 196, 220, 196, 165, 196, 220, 247],
+        step: 0.4,
+        type: "sine",
+        gain: 0.24,
+        glide: 0.06,
+      });
+      return;
+    }
+    if (id === "north") {
+      this.startDrone(ctx, dest, 115, "square", 0.05);
+      this.startNoise(ctx, dest, "white", 0.05);
+      this.startMelody(ctx, dest, {
+        notes: [230, 207, 246, 184, 230, 207, 276, 246],
+        step: 0.5,
+        type: "sawtooth",
+        gain: 0.16,
+        glide: 0.02,
+      });
+      return;
+    }
+    if (id === "delicate") {
+      this.startDrone(ctx, dest, 105, "sine", 0.05);
+      this.startMelody(ctx, dest, {
+        notes: [210, 315, 262, 210, 157, 210, 262, 315],
+        step: 0.27,
+        type: "triangle",
+        gain: 0.2,
+        glide: 0,
+      });
+      return;
+    }
+    if (id === "readyforit") {
+      this.startDrone(ctx, dest, 80, "square", 0.09);
+      this.startNoise(ctx, dest, "pink", 0.07);
+      this.startMelody(ctx, dest, {
+        notes: [160, 160, 190, 160, 127, 160, 160, 213],
+        step: 0.19,
+        type: "square",
+        gain: 0.14,
+        glide: 0,
+      });
+      return;
+    }
+    if (id === "feeluluvme") {
+      this.startDrone(ctx, dest, 120, "sine", 0.05);
+      this.startNoise(ctx, dest, "pink", 0.04);
+      this.startMelody(ctx, dest, {
+        notes: [240, 320, 240, 360, 240, 320, 480, 360],
+        step: 0.16,
+        type: "triangle",
+        gain: 0.22,
+        glide: 0.02,
+      });
+      return;
+    }
+    if (id === "dashstar") {
+      this.startDrone(ctx, dest, 95, "square", 0.08);
+      this.startNoise(ctx, dest, "white", 0.1);
+      this.startMelody(ctx, dest, {
+        notes: [190, 95, 190, 143, 190, 95, 238, 190],
+        step: 0.12,
+        type: "sawtooth",
+        gain: 0.16,
+        glide: 0.04,
+      });
+      return;
+    }
     this.startNoise(ctx, dest, "white", 0.06);
     this.startMelody(ctx, dest, {
       notes: [300, 180, 420, 90, 300, 510, 150, 300],

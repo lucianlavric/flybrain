@@ -2,8 +2,16 @@
 "use no memo";
 
 import { Canvas } from "@react-three/fiber";
+import Image from "next/image";
 import Link from "next/link";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type ReactNode,
+} from "react";
 import type { CameraMode } from "@/components/ArenaCameras";
 import { BrainFire } from "@/components/BrainFire";
 import { FlyArena, type ArenaHud } from "@/components/FlyArena";
@@ -63,6 +71,7 @@ export function ArenaApp() {
   const [link, setLink] = useState("off");
   const [stimulusId, setStimulusId] = useState("nectar");
   const [playing, setPlaying] = useState(false);
+  const [hasPlayed, setHasPlayed] = useState(false);
   const [dose, setDose] = useState(1);
   const [volume, setVolume] = useState(0.22);
   const [fileLabel, setFileLabel] = useState("");
@@ -141,6 +150,7 @@ export function ArenaApp() {
       }
       await lab.play(stim);
       setPlaying(true);
+      setHasPlayed(true);
     },
     [lab, local, remote],
   );
@@ -246,83 +256,56 @@ export function ArenaApp() {
               turn={hud.turn}
             />
           </div>
-          <div className="pointer-events-auto flex flex-wrap justify-end gap-2">
+          <div className="pointer-events-auto flex flex-wrap items-center justify-end gap-2">
             <Link
-              className="rounded-full bg-zinc-800 px-3 py-1.5 text-sm text-zinc-200"
+              className="rounded-full border border-white/10 bg-black/40 px-3.5 py-1.5 text-sm text-zinc-200 backdrop-blur-md transition-colors hover:bg-black/60"
               href="/taste"
             >
               Taste lab
             </Link>
+            <Seg>
+              <SegBtn on={mode === "brain"} onClick={() => setMode("brain")}>
+                Brain
+              </SegBtn>
+              <SegBtn on={mode === "manual"} onClick={() => setMode("manual")}>
+                Manual
+              </SegBtn>
+            </Seg>
+            <Seg>
+              <SegBtn
+                on={backend === "modal"}
+                onClick={() => setBackend("modal")}
+              >
+                Modal
+              </SegBtn>
+              <SegBtn
+                on={backend === "local"}
+                onClick={() => setBackend("local")}
+              >
+                Local
+              </SegBtn>
+            </Seg>
+            <Seg>
+              <SegBtn
+                on={camMode === "follow"}
+                onClick={() => setCamMode("follow")}
+              >
+                Follow fly
+              </SegBtn>
+              <SegBtn on={camMode === "free"} onClick={() => setCamMode("free")}>
+                Free camera
+              </SegBtn>
+            </Seg>
+            <Seg>
+              <SegBtn
+                on={showGizmos}
+                onClick={() => setShowGizmos((prev) => !prev)}
+              >
+                Guides
+              </SegBtn>
+            </Seg>
             <button
-              className={`rounded-full px-3 py-1.5 text-sm ${
-                mode === "brain"
-                  ? "bg-amber-500/90 text-black"
-                  : "bg-zinc-800 text-zinc-200"
-              }`}
-              onClick={() => setMode("brain")}
-              type="button"
-            >
-              Brain
-            </button>
-            <button
-              className={`rounded-full px-3 py-1.5 text-sm ${
-                mode === "manual"
-                  ? "bg-amber-500/90 text-black"
-                  : "bg-zinc-800 text-zinc-200"
-              }`}
-              onClick={() => setMode("manual")}
-              type="button"
-            >
-              Manual
-            </button>
-            <button
-              className={`rounded-full px-3 py-1.5 text-sm ${
-                backend === "modal"
-                  ? "bg-amber-500/90 text-black"
-                  : "bg-zinc-800 text-zinc-200"
-              }`}
-              onClick={() =>
-                setBackend((prev) => (prev === "local" ? "modal" : "local"))
-              }
-              type="button"
-            >
-              {backend === "modal" ? "Modal" : "Local"}
-            </button>
-            <button
-              className={`rounded-full px-3 py-1.5 text-sm ${
-                camMode === "follow"
-                  ? "bg-amber-500/90 text-black"
-                  : "bg-zinc-800 text-zinc-200"
-              }`}
-              onClick={() => setCamMode("follow")}
-              type="button"
-            >
-              Follow fly
-            </button>
-            <button
-              className={`rounded-full px-3 py-1.5 text-sm ${
-                camMode === "free"
-                  ? "bg-amber-500/90 text-black"
-                  : "bg-zinc-800 text-zinc-200"
-              }`}
-              onClick={() => setCamMode("free")}
-              type="button"
-            >
-              Free camera
-            </button>
-            <button
-              className={`rounded-full px-3 py-1.5 text-sm ${
-                showGizmos
-                  ? "bg-amber-500/90 text-black"
-                  : "bg-zinc-800 text-zinc-200"
-              }`}
-              onClick={() => setShowGizmos((prev) => !prev)}
-              type="button"
-            >
-              Guides
-            </button>
-            <button
-              className="rounded-full bg-zinc-800 px-3 py-1.5 text-sm text-zinc-200"
+              className="rounded-full border border-white/10 bg-black/40 px-3.5 py-1.5 text-sm text-zinc-200 backdrop-blur-md transition-colors hover:bg-black/60"
               onClick={() => setResetToken((n) => n + 1)}
               type="button"
             >
@@ -331,17 +314,17 @@ export function ArenaApp() {
           </div>
         </div>
         <div className="flex items-end justify-between gap-4">
-          <div className="pointer-events-auto max-w-xl rounded-xl bg-black/50 p-3 backdrop-blur-sm">
+          <div className="pointer-events-auto max-w-xl rounded-2xl border border-white/10 bg-black/40 p-3.5 shadow-lg shadow-black/30 backdrop-blur-md">
             <p className="text-[11px] tracking-[0.18em] text-zinc-500 uppercase">
               Library
             </p>
             <div className="mt-2 grid grid-cols-3 gap-1.5">
-              {SONGS.map((item) => (
+              {SONGS.filter((item) => item.tag === "library").map((item) => (
                 <button
-                  className={`rounded-lg px-2.5 py-2 text-left text-sm ${
+                  className={`rounded-xl px-2.5 py-2 text-left text-sm transition-colors ${
                     stimulusId === item.id
-                      ? "bg-amber-500/90 text-black"
-                      : "bg-zinc-800 text-zinc-200"
+                      ? "bg-gradient-to-b from-amber-400 to-amber-500 text-black"
+                      : "bg-white/5 text-zinc-200 hover:bg-white/10"
                   }`}
                   key={item.id}
                   onClick={() => pickSong(item)}
@@ -360,6 +343,47 @@ export function ArenaApp() {
                       : item.id === "swing"
                         ? "110–370 Hz"
                         : "scrap + noise"}
+                  </span>
+                </button>
+              ))}
+            </div>
+            <p className="mt-2 text-[11px] tracking-[0.18em] text-zinc-500 uppercase">
+              Artist tracks
+            </p>
+            <div className="mt-1.5 grid grid-cols-3 gap-1.5">
+              {SONGS.filter((item) => item.tag === "artist").map((item) => (
+                <button
+                  className={`flex items-center gap-2 rounded-xl px-2 py-1.5 text-left text-sm transition-colors ${
+                    stimulusId === item.id
+                      ? "bg-gradient-to-b from-amber-400 to-amber-500 text-black"
+                      : "bg-white/5 text-zinc-200 hover:bg-white/10"
+                  }`}
+                  key={item.id}
+                  onClick={() => pickSong(item)}
+                  type="button"
+                >
+                  {item.cover ? (
+                    <Image
+                      alt=""
+                      className="h-7 w-7 flex-none rounded-md object-cover"
+                      height={28}
+                      src={item.cover}
+                      width={28}
+                    />
+                  ) : null}
+                  <span className="min-w-0">
+                    <span className="block truncate text-[12px] font-medium leading-tight">
+                      {item.name}
+                    </span>
+                    <span
+                      className={`block text-[10px] ${
+                        stimulusId === item.id
+                          ? "text-black/70"
+                          : "text-zinc-500"
+                      }`}
+                    >
+                      {item.artist}
+                    </span>
                   </span>
                 </button>
               ))}
@@ -418,7 +442,59 @@ export function ArenaApp() {
               />
             </label>
           </div>
-          <div className="rounded-xl bg-black/50 px-3 py-2 font-mono text-[11px] leading-5 text-zinc-300 backdrop-blur-sm">
+          {hasPlayed ? (
+            <div className="pointer-events-auto flex items-center gap-3.5 self-end rounded-full border border-white/10 bg-black/40 py-2.5 pr-6 pl-2.5 shadow-lg shadow-black/30 backdrop-blur-md">
+              <div
+                className="relative h-[72px] w-[72px] flex-none overflow-hidden rounded-full shadow-[0_0_0_1px_rgba(255,255,255,0.15),0_6px_20px_rgba(0,0,0,0.5)]"
+                style={{
+                  animation: "disc-spin 3.2s linear infinite",
+                  animationPlayState: playing ? "running" : "paused",
+                }}
+              >
+                {stimulus.cover ? (
+                  <Image
+                    alt=""
+                    className="absolute inset-0 h-full w-full object-cover"
+                    height={72}
+                    src={stimulus.cover}
+                    width={72}
+                  />
+                ) : (
+                  <div
+                    className="absolute inset-0"
+                    style={{
+                      background: `radial-gradient(circle at 30% 30%, ${stimulus.color}, #1c1917)`,
+                    }}
+                  />
+                )}
+                <div
+                  className="absolute inset-0 rounded-full"
+                  style={{
+                    background:
+                      "repeating-radial-gradient(circle, transparent 0 2px, rgba(0,0,0,0.13) 2px 3px)",
+                  }}
+                />
+                <div className="absolute inset-[41%] rounded-full bg-[#0c0f14] shadow-[0_0_0_2px_rgba(255,255,255,0.3)]" />
+              </div>
+              <div className="min-w-0">
+                <p className="truncate text-[15px] leading-tight font-semibold text-zinc-50">
+                  {stimulus.name}
+                </p>
+                <p className="truncate text-[11px] text-zinc-400">
+                  {stimulus.artist ?? "flybrain library"}
+                </p>
+                <p className="mt-1 flex items-center gap-1.5 text-[9.5px] tracking-[0.14em] text-amber-400 uppercase">
+                  <span
+                    className={`h-1.5 w-1.5 rounded-full bg-amber-400 ${
+                      playing ? "animate-pulse" : "opacity-30"
+                    }`}
+                  />
+                  {playing ? "Playing into brain" : "Paused"}
+                </p>
+              </div>
+            </div>
+          ) : null}
+          <div className="rounded-2xl border border-white/10 bg-black/40 px-3.5 py-2.5 font-mono text-[11px] leading-5 text-zinc-300 shadow-lg shadow-black/30 backdrop-blur-md">
             <div>
               {valenceLabel} · JO {hud.joGain.toFixed(2)} · {Math.round(hud.hz)} Hz
             </div>
@@ -448,14 +524,46 @@ export function ArenaApp() {
   );
 }
 
+function Seg({ children }: { children: ReactNode }) {
+  return (
+    <div className="flex rounded-full border border-white/10 bg-black/40 p-1 backdrop-blur-md">
+      {children}
+    </div>
+  );
+}
+
+function SegBtn({
+  on,
+  onClick,
+  children,
+}: {
+  on: boolean;
+  onClick: () => void;
+  children: ReactNode;
+}) {
+  return (
+    <button
+      className={`rounded-full px-3 py-1 text-sm transition-colors ${
+        on
+          ? "bg-gradient-to-b from-amber-400 to-amber-500 font-medium text-black shadow-[0_2px_8px_rgba(245,158,11,0.35)]"
+          : "text-zinc-400 hover:text-zinc-200"
+      }`}
+      onClick={onClick}
+      type="button"
+    >
+      {children}
+    </button>
+  );
+}
+
 function MotorBar({ label, value }: { label: string; value: number }) {
   const width = Math.min(100, Math.abs(value) * 100);
   return (
     <div className="flex items-center gap-2">
       <span className="w-8">{label}</span>
-      <span className="relative h-1.5 w-28 overflow-hidden rounded-full bg-zinc-700">
+      <span className="relative h-1.5 w-28 overflow-hidden rounded-full bg-white/10">
         <span
-          className="absolute top-0 h-full bg-amber-400"
+          className="absolute top-0 h-full rounded-full bg-gradient-to-r from-amber-500 to-amber-300"
           style={{
             left: value < 0 ? `${50 - width / 2}%` : "50%",
             width: `${width / 2}%`,

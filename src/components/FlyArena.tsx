@@ -412,8 +412,8 @@ function RayFan({ rays }: { rays: { current: number[] } }) {
             meshes.current[i] = node;
           }}
         >
-          <boxGeometry args={[0.015, 0.015, 1]} />
-          <meshBasicMaterial transparent opacity={0.55} />
+          <boxGeometry args={[0.008, 0.008, 1]} />
+          <meshBasicMaterial transparent opacity={0.28} />
         </mesh>
       ))}
     </group>

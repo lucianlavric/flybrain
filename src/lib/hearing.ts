@@ -23,6 +23,8 @@ export type Stimulus = {
   courtship: number;
   color: string;
   tag: string;
+  artist?: string;
+  cover?: string;
 };
 
 export type AudioSnap = {
@@ -90,6 +92,84 @@ export const SONGS: Stimulus[] = [
     courtship: 0.06,
     color: "#f07167",
     tag: "library",
+  },
+  {
+    id: "sofia",
+    name: "Sofia",
+    note: "Measured from the real track: the soft production doesn't survive band-limiting — in-band it's as rough as a knock2 drop. Mild repel.",
+    kind: "song",
+    hz: 441,
+    roughness: 0.67,
+    courtship: 0.2,
+    color: "#e8b4b8",
+    tag: "artist",
+    artist: "Clairo",
+    cover: "/covers/immunity.jpg",
+  },
+  {
+    id: "north",
+    name: "North",
+    note: "Measured from the real track: Clairo's roughest, as predicted — tied with dashstar* for most repellent of the six.",
+    kind: "song",
+    hz: 440,
+    roughness: 0.68,
+    courtship: 0.2,
+    color: "#b08968",
+    tag: "artist",
+    artist: "Clairo",
+    cover: "/covers/immunity.jpg",
+  },
+  {
+    id: "delicate",
+    name: "Delicate",
+    note: "Measured from the real track: the fly's favorite of the six — lowest roughness, highest courtship — but still net mild repel. No human song attracts.",
+    kind: "song",
+    hz: 434,
+    roughness: 0.62,
+    courtship: 0.24,
+    color: "#9db4c0",
+    tag: "artist",
+    artist: "Taylor Swift",
+    cover: "/covers/reputation.jpg",
+  },
+  {
+    id: "readyforit",
+    name: "…Ready For It?",
+    note: "Measured from the real track: the industrial menace is mostly above the fly's hearing — in-band it's milder than Sofia. Mid-pack repel.",
+    kind: "song",
+    hz: 438,
+    roughness: 0.65,
+    courtship: 0.21,
+    color: "#4a5759",
+    tag: "artist",
+    artist: "Taylor Swift",
+    cover: "/covers/reputation.jpg",
+  },
+  {
+    id: "feeluluvme",
+    name: "feel U luv Me",
+    note: "Measured from the real track: the 80–900 Hz slice the antenna receives is rougher than it sounds. Mild repel, not the predicted attract.",
+    kind: "song",
+    hz: 457,
+    roughness: 0.67,
+    courtship: 0.19,
+    color: "#c77dff",
+    tag: "artist",
+    artist: "knock2",
+    cover: "/covers/feeluluvme.jpg",
+  },
+  {
+    id: "dashstar",
+    name: "dashstar*",
+    note: "Measured from the real track: repel confirmed, but mastering flattens the growl — in-band it's barely rougher than feel U luv Me.",
+    kind: "song",
+    hz: 447,
+    roughness: 0.69,
+    courtship: 0.19,
+    color: "#ff5d8f",
+    tag: "artist",
+    artist: "knock2",
+    cover: "/covers/dashstar.jpg",
   },
 ];
 
